@@ -27,8 +27,8 @@ const genSecret = async (req: Request) => {
 connectToDatabase()
   .then(() => {
     app.use(cors(corsOptions));
-    app.use(HMAC(genSecret, { minInterval: 30 }));
     app.use(express.json());
+    app.use(HMAC(genSecret, { minInterval: 30 }));
     app.use("/users", usersRouter);
     app.use("/verify", verifyRouter);
 
