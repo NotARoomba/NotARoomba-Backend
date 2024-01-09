@@ -7,18 +7,6 @@ export const usersRouter = express.Router();
 
 usersRouter.use(express.json());
 
-usersRouter.get("/", async (req: Request, res: Response) => {
-  try {
-    let users: User[] = [];
-    if (collections.users) {
-      users = (await collections.users.find({}).toArray()) as unknown as User[];
-    }
-    res.status(200).send({ users, status: STATUS_CODES.SUCCESS });
-  } catch (error) {
-    res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
-  }
-});
-
 usersRouter.get("/:email", async (req: Request, res: Response) => {
   const email = req?.params?.email;
   console.log(`Getting data for: ${email}`);
