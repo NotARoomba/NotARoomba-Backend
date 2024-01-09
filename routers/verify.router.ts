@@ -147,6 +147,6 @@ verifyRouter.post("/check", async (req: Request, res: Response) => {
       res.status(404).send({ status: STATUS_CODES.CODE_DENIED });
     }
   } catch (error: unknown) {
-    res.status(404).send({ status: STATUS_CODES.ERROR_SENDING_CODE });
+    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });

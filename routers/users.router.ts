@@ -47,14 +47,19 @@ usersRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
-usersRouter.post("/namechk", async (req: Request, res: Response) => {
+usersRouter.post("/check", async (req: Request, res: Response) => {
   const username: User = req.body.username;
+  const email: User = req.body.email;
   try {
-    let users: User[] = [];
+    let emailUsers: User[] = [];
+    let nameUsers: User[] = [];
     if (collections.users) {
-      users = (await collections.users.find({username}).toArray()) as unknown as User[];
+      emailUsers = (await collections.users.find({email}).toArray()) as unknown as User[];
+      nameUsers = (await collections.users.find({username}).toArray()) as unknown as User[];
     }
-    res.status(200).send({ unique: users.length === 0, status: STATUS_CODES.SUCCESS });
+    if (emailUsers.length !== 0) return res.status(200).send({ status: STATUS_CODES.EMAIL_IN_USE });
+    else if (nameUsers.length !== 0) res.status(200).send({ status: STATUS_CODES.USERNAME_IN_USE });
+    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE }); 
   } catch (error) {
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
