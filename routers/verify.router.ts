@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import * as nodemailer from 'nodemailer';
 import {load} from 'ts-dotenv';
-import sha256 from 'crypto-js/sha256';
+import { SHA256 } from "crypto-js";
 import STATUS_CODES from '../models/status';
 
 const env = load({
@@ -22,7 +22,7 @@ export const verifyRouter = express.Router();
 verifyRouter.use(express.json());
 
 const getVerificationCode = (email: string) => {
-  return sha256(
+  return SHA256(
       email +
       (
         Math.floor(Date.now() / (2 * 60 * 1000)) *
