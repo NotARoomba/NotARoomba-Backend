@@ -19,11 +19,9 @@ const corsOptions: CorsOptions = {
 };
 
 const genSecret = async (req: Request) => {
-  const secret = req
-    ? SHA256(Math.floor(Date.now() / (30 * 1000)).toString()).toString()
+  return req
+    ? Math.floor(Date.now() / (30 * 1000)).toString()
     : "";
-    console.log(secret)
-    return secret
 };
 
 connectToDatabase()
