@@ -1,10 +1,10 @@
 export class MakinatorData {
   constructor(
-    public games: Array<MakinatorGame>,
-    public highscore: MakinatorGame,
+    public guessGames: Array<MakinatorGuessGame>,
+
   ) {}
 }
-export interface MakinatorGame {
+export interface MakinatorGuessGame {
   score: number;
   time: number;
   lives: number;

@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
 import User from "../models/user";
 import STATUS_CODES from "../models/status";
+import { ObjectId } from "mongodb";
 
 export const usersRouter = express.Router();
 
@@ -24,26 +25,28 @@ usersRouter.get("/:email", async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    res.status(404).send({ user: null, error: true, msg: error });
+    res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
 
 usersRouter.post("/update", async (req: Request, res: Response) => {
   const data: User = req.body;
+  let id: ObjectId | null = null;
   try {
     if (collections.users) {
-      await collections.users.updateOne(
+      const res = await collections.users.updateOne(
         { email: data.email },
         { $set: data },
         {
           upsert: true,
         },
       );
+      id = res.upsertedId
     }
-    res.send({ status: STATUS_CODES.SUCCESS });
+    res.send({ id, status: STATUS_CODES.SUCCESS });
   } catch (error) {
     console.log(error);
-    res.send({ error: true, msg: error });
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
 

@@ -6,6 +6,6 @@ export default class User {
     public username: string,
     public email: string,
     public dateJoined: Date,
-    public gameData: Array<MakinatorData>,
+    public makinatorData: Array<MakinatorData>,
   ) {}
 }

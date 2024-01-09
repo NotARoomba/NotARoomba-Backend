@@ -121,7 +121,6 @@ verifyRouter.post("/send", async (req: Request, res: Response) => {
       //   email,
       // )}`,
     });
-    console.log(info)
     if (info.accepted) {
       res.status(200).send({ status: STATUS_CODES.SENT_CODE });
     } else if (!info.rejected) {
