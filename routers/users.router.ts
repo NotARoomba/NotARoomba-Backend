@@ -58,3 +58,16 @@ usersRouter.post("/update", async (req: Request, res: Response) => {
     res.send({ error: true, msg: error });
   }
 });
+
+usersRouter.post("/namechk", async (req: Request, res: Response) => {
+  const username: User = req.body.username;
+  try {
+    let users: User[] = [];
+    if (collections.users) {
+      users = (await collections.users.find({username}).toArray()) as unknown as User[];
+    }
+    res.status(200).send({ unique: users.length === 0, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
