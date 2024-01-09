@@ -19,23 +19,25 @@ const corsOptions: CorsOptions = {
 };
 
 const genSecret = async (req: Request) => {
-  return req ? SHA256(Math.floor(Date.now() / (30 * 1000)).toString()).toString() : '';
+  return req
+    ? SHA256(Math.floor(Date.now() / (30 * 1000)).toString()).toString()
+    : "";
 };
 
 connectToDatabase()
   .then(() => {
     app.use(cors(corsOptions));
-    app.use(HMAC(genSecret, {minInterval: 30}));
+    app.use(HMAC(genSecret, { minInterval: 30 }));
     app.use(express.json());
     app.use("/users", usersRouter);
     app.use("/verify", verifyRouter);
 
-    app.use('/', async (_req: Request, res: Response) => {
-      res.status(200).send('You arent supposed to be here');
+    app.use("/", async (_req: Request, res: Response) => {
+      res.status(200).send("You arent supposed to be here");
     });
     app.use(
       (
-        error: {message: string; code: string},
+        error: { message: string; code: string },
         req: Request,
         res: Response,
         next: () => void,
@@ -43,7 +45,7 @@ connectToDatabase()
         // check by error instance
         if (error instanceof AuthError) {
           res.status(401).json({
-            error: 'Invalid request',
+            error: "Invalid request",
             info: error.message,
           });
         }

@@ -1,8 +1,8 @@
-import express, {Request, Response} from 'express';
-import * as nodemailer from 'nodemailer';
-import {load} from 'ts-dotenv';
+import express, { Request, Response } from "express";
+import * as nodemailer from "nodemailer";
+import { load } from "ts-dotenv";
 import { SHA256 } from "crypto-js";
-import STATUS_CODES from '../models/status';
+import STATUS_CODES from "../models/status";
 
 const env = load({
   EMAIL: String,
@@ -10,7 +10,7 @@ const env = load({
 });
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: env.EMAIL,
     pass: env.EMAIL_PASS,
@@ -23,12 +23,14 @@ verifyRouter.use(express.json());
 
 const getVerificationCode = (email: string) => {
   return SHA256(
-      email +
+    email +
       (
         Math.floor(Date.now() / (2 * 60 * 1000)) *
         Math.floor(Date.now() / (2 * 60 * 1000))
       ).toString(),
-  ).toString().replace(/[^0-9]/g, '')
+  )
+    .toString()
+    .replace(/[^0-9]/g, "")
     .substring(0, 6);
 };
 
@@ -71,17 +73,13 @@ const getVerificationCode = (email: string) => {
 //   }
 // });
 
-verifyRouter.post('/send', async (req: Request, res: Response) => {
+verifyRouter.post("/send", async (req: Request, res: Response) => {
   const email: string = req.body.email;
   const service: string = req.body.service;
-  if (email === '') {
-    return res
-      .status(404)
-      .send({status: STATUS_CODES.INVALID_EMAIL});
-  } else if (service === '') {
-    return res
-      .status(404)
-      .send({status: STATUS_CODES.INVALID_SERVICE});
+  if (email === "") {
+    return res.status(404).send({ status: STATUS_CODES.INVALID_EMAIL });
+  } else if (service === "") {
+    return res.status(404).send({ status: STATUS_CODES.INVALID_SERVICE });
   }
   try {
     //send emailz
@@ -114,8 +112,8 @@ verifyRouter.post('/send', async (req: Request, res: Response) => {
     `,
       attachments: [
         {
-          filename: 'logo.jpg',
-          path: process.cwd() + '/images/logo.jpg',
+          filename: "logo.jpg",
+          path: process.cwd() + "/images/logo.jpg",
           cid: email, //same cid value as in the html img src
         },
       ],
@@ -124,37 +122,31 @@ verifyRouter.post('/send', async (req: Request, res: Response) => {
       // )}`,
     });
     if (info.accepted) {
-      res.status(200).send({status: STATUS_CODES.SENT_CODE});
+      res.status(200).send({ status: STATUS_CODES.SENT_CODE });
     } else if (!info.rejected) {
-      res
-        .status(404)
-        .send({status: STATUS_CODES.EMAIL_NOT_EXIST});
+      res.status(404).send({ status: STATUS_CODES.EMAIL_NOT_EXIST });
     } else {
-      res
-        .status(404)
-        .send({status: STATUS_CODES.ERROR_SENDING_CODE});
+      res.status(404).send({ status: STATUS_CODES.ERROR_SENDING_CODE });
     }
   } catch (error: unknown) {
     console.log(error);
-    return res.status(404).send({status: STATUS_CODES.ERROR_SENDING_CODE});
+    return res.status(404).send({ status: STATUS_CODES.ERROR_SENDING_CODE });
   }
 });
 
-verifyRouter.post('/check', async (req: Request, res: Response) => {
+verifyRouter.post("/check", async (req: Request, res: Response) => {
   const email: string = req?.body?.email;
   const code: string = req?.body?.code as string;
   if (code.length !== 6) {
-    return res.status(404).send({status: STATUS_CODES.CODE_DENIED});
+    return res.status(404).send({ status: STATUS_CODES.CODE_DENIED });
   }
   try {
     if (getVerificationCode(email) === code) {
-      res.status(200).send({status: STATUS_CODES.SUCCESS});
+      res.status(200).send({ status: STATUS_CODES.SUCCESS });
     } else {
-      res.status(404).send({status: STATUS_CODES.CODE_DENIED});
+      res.status(404).send({ status: STATUS_CODES.CODE_DENIED });
     }
   } catch (error: unknown) {
-    res
-      .status(404)
-      .send({status: STATUS_CODES.ERROR_SENDING_CODE});
+    res.status(404).send({ status: STATUS_CODES.ERROR_SENDING_CODE });
   }
 });
