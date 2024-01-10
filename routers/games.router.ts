@@ -3,6 +3,7 @@ import { collections } from "../services/database.service";
 import STATUS_CODES from "../models/status";
 import { GAMES, Game, MakinatorGuessGame } from "../models/games";
 import User from "../models/user";
+import { ObjectId } from "mongodb";
 
 export const gamesRouter = express.Router();
 
@@ -15,7 +16,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   try {
     if (collections.users) {
       const data = await collections.users.updateOne(
-        { _id: userID },
+        { _id: new ObjectId(userID) },
         { $push: { "makinatorData.guessGames": gameData} },
       );
       console.log(data)
@@ -35,7 +36,7 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     try {
       if (collections.users) {
         const data = await collections.users.findOne(
-          { _id: userID },
+          { _id: new ObjectId(userID) },
           {},
         ) as unknown as User;
         console.log(data)
