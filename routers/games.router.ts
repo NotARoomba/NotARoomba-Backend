@@ -15,12 +15,12 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   console.log(service, game)
   try {
     if (collections.users) {
-      const res = await collections.users.updateOne(
+      const data = await collections.users.updateOne(
         { _id: userID },
         { $push: { [service]: {[game]: gameData}} },
       );
+      console.log(data)
     }
-    console.log(res)
     res.send({ status: STATUS_CODES.SUCCESS });
   } catch (error) {
     console.log(error);
@@ -35,12 +35,12 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     let highscore: Game | null = null;
     try {
       if (collections.users) {
-        const res = await collections.users.findOne(
+        const data = await collections.users.findOne(
           { _id: userID },
           { [service]: {[game]: {}} },
         ) as unknown as Game[];
-        console.log(res)
-        highscore = res.sort(
+        console.log(data)
+        highscore = data.sort(
             (a: Game, b: Game) => b.score - a.score)[0]
       }
       res.send({ highscore, status: STATUS_CODES.SUCCESS });
