@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
 import STATUS_CODES from "../models/status";
 import { GAMES, Game, MakinatorGuessGame } from "../models/games";
+import User from "../models/user";
 
 export const gamesRouter = express.Router();
 
@@ -29,16 +30,16 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     const userID = req.body.userID;
     const gameType: GAMES = req.body.type;
-    // const [service, game] = gameType.split('.');
+    const [service, game] = gameType.split('.');
     let highscore: Game | null = null;
     try {
       if (collections.users) {
         const data = await collections.users.findOne(
           { _id: userID },
-          { "makinatorData.guessGames": {} },
-        ) as unknown as Game[];
+          {},
+        ) as unknown as User;
         console.log(data)
-        highscore = data.sort(
+        highscore = data[service][game].sort(
             (a: Game, b: Game) => b.score - a.score)[0]
       }
       res.send({ highscore, status: STATUS_CODES.SUCCESS });
