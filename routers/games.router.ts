@@ -15,7 +15,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
     if (collections.users) {
       const data = await collections.users.updateOne(
         { _id: userID },
-        { $push: { [gameType]: gameData} },
+        { $push: { "makinatorData.guessGames": gameData} },
       );
       console.log(data)
     }
@@ -35,7 +35,7 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
       if (collections.users) {
         const data = await collections.users.findOne(
           { _id: userID },
-          { [gameType]: {} },
+          { "makinatorData.guessGames": {} },
         ) as unknown as Game[];
         console.log(data)
         highscore = data.sort(
