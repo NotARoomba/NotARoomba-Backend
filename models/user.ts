@@ -1,10 +1,6 @@
 import { MakinatorData } from "./games";
 
-interface GetData {
-  [key: string]: any
-}
-
-export default class User implements GetData {
+export default class User {
   constructor(
     public avatar: string,
     public username: string,

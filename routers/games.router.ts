@@ -39,7 +39,7 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
           {},
         ) as unknown as User;
         console.log(data)
-        highscore = data[service][game].sort(
+        highscore = (data as any)[service][game].sort(
             (a: Game, b: Game) => b.score - a.score)[0]
       }
       res.send({ highscore, status: STATUS_CODES.SUCCESS });
