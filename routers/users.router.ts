@@ -14,6 +14,7 @@ usersRouter.get("/:emailid", async (req: Request, res: Response) => {
   try {
     let user: User | null = null;
     if (collections.users) {
+      //check if has @ symbol
       user = (await collections.users.findOne({ $or: [{_id: new ObjectId(emailid)}, {email: emailid}] })) as unknown as User;
     }
     if (user) {
