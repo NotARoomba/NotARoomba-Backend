@@ -11,13 +11,11 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   const gameData = req.body.game;
   const userID = req.body.userID;
   const gameType: GAMES = req.body.type;
-  const [service, game] = gameType.split('.');
-  console.log(service, game)
   try {
     if (collections.users) {
       const data = await collections.users.updateOne(
         { _id: userID },
-        { $push: { [service]: {[game]: gameData}} },
+        { $push: { [gameType]: gameData} },
       );
       console.log(data)
     }
@@ -31,13 +29,13 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     const userID = req.body.userID;
     const gameType: GAMES = req.body.type;
-    const [service, game] = gameType.split('.');
+    // const [service, game] = gameType.split('.');
     let highscore: Game | null = null;
     try {
       if (collections.users) {
         const data = await collections.users.findOne(
           { _id: userID },
-          { [service]: {[game]: {}} },
+          { [gameType]: {} },
         ) as unknown as Game[];
         console.log(data)
         highscore = data.sort(
