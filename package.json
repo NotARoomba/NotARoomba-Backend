@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "npm i",
-    "start": "nodemon index.ts"
+    "start": "ts-node index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -33,7 +33,7 @@
     "@types/nodemailer": "^6.4.14",
     "@types/winston-syslog": "^2.4.0",
     "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.1.6"
   },
   "compilerOptions": {

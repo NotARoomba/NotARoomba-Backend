@@ -1,8 +1,6 @@
 import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
-import User from "../models/user";
 import STATUS_CODES from "../models/status";
-import { ObjectId } from "mongodb";
 import { GAMES, Game, MakinatorGuessGame } from "../models/games";
 
 export const gamesRouter = express.Router();
