@@ -15,7 +15,11 @@ usersRouter.get("/:emailid", async (req: Request, res: Response) => {
     let user: User | null = null;
     if (collections.users) {
       //check if has @ symbol
-      user = (await collections.users.findOne({ $or: [{_id: new ObjectId(emailid)}, {email: emailid}] })) as unknown as User;
+      if (emailid.includes('@')) {
+        user = (await collections.users.findOne({ email: emailid })) as unknown as User;
+      } else {
+        user = (await collections.users.findOne({ _id: new ObjectId(emailid) })) as unknown as User;
+      }
     }
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
