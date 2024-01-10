@@ -39,6 +39,7 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
           { _id: userID },
           { [service]: {[game]: {}} },
         ) as unknown as Game[];
+        console.log(res)
         highscore = res.sort(
             (a: Game, b: Game) => b.score - a.score)[0]
       }
