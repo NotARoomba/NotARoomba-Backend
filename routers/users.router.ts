@@ -8,13 +8,13 @@ export const usersRouter = express.Router();
 
 usersRouter.use(express.json());
 
-usersRouter.get("/:email", async (req: Request, res: Response) => {
-  const email = req?.params?.email;
-  console.log(`Getting data for: ${email}`);
+usersRouter.get("/:emailid", async (req: Request, res: Response) => {
+  const emailid = req?.params?.emailid;
+  console.log(`Getting data for: ${emailid}`);
   try {
     let user: User | null = null;
     if (collections.users) {
-      user = (await collections.users.findOne({ email })) as unknown as User;
+      user = (await collections.users.findOne({ $or: [{_id: new ObjectId(emailid)}, {email: emailid}] })) as unknown as User;
     }
     if (user) {
       res.status(200).send({ user, status: STATUS_CODES.SUCCESS });
