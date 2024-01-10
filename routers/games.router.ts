@@ -17,7 +17,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
     if (collections.users) {
       const data = await collections.users.updateOne(
         { _id: new ObjectId(userID) },
-        { $push: { "makinatorData.guessGames": gameData} },
+        { $push: { [gameType]: gameData} },
       );
       console.log(data)
     }
@@ -39,7 +39,6 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
           { _id: new ObjectId(userID) },
           {},
         ) as unknown as User;
-        console.log(data)
         highscore = (data as any)[service][game].sort(
             (a: Game, b: Game) => b.score - a.score)[0]
       }
