@@ -12,6 +12,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   const userID = req.body.userID;
   const gameType: GAMES = req.body.type;
   const [service, game] = gameType.split('.');
+  console.log(service, game)
   try {
     if (collections.users) {
       const res = await collections.users.updateOne(
@@ -19,6 +20,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
         { $push: { [service]: {[game]: gameData}} },
       );
     }
+    console.log(res)
     res.send({ status: STATUS_CODES.SUCCESS });
   } catch (error) {
     console.log(error);
