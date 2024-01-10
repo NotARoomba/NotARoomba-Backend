@@ -21,7 +21,7 @@ const corsOptions: CorsOptions = {
 
 const genSecret = async (req: Request) => {
   return req
-    ? Math.floor(Date.now() / (30 * 1000)).toString()
+    ? Math.floor(Date.now() / (60 * 1000)).toString()
     : "";
 };
 
