@@ -25,6 +25,7 @@ usersRouter.get("/:emailid", async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
+    console.log(error)
     res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
