@@ -18,6 +18,7 @@ export enum GAMES {
 }
 
 export interface HighScore {
-  game: Game;
-  gamesPlayed: number;
+  username: string;
+  score: number;
+  time: number;
 }

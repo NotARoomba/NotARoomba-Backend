@@ -29,9 +29,77 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 });
 
 gamesRouter.post("/highscores", async (req: Request, res: Response) => {
-  const userID = req.body.userID;
+  const gameType: GAMES = req.body.type;
+  const [service, game] = gameType.split(".");
+  let highscores: HighScore[] = [];
+  try {
+    if (collections.users) {
+      highscores = await collections.users.aggregate([
+        // Unwind the guessGames array
+        {
+          $unwind: "$makinatorData.guessGames"
+        },
+        // Project the necessary fields
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            "makinatorData.guessGames.time": 1,
+            "makinatorData.guessGames.score": 1
+          }
+        },
+        // Sort by time in ascending order and score in descending order
+        {
+          $sort: {
+            "makinatorData.guessGames.time": 1,
+            "makinatorData.guessGames.score": -1
+          }
+        },
+        // Group by document ID and find the top score for each game
+        {
+          $group: {
+            _id: "$_id",
+            username: {
+              $first: "$username"
+            },
+            highestScore: {
+              $first: {
+                time: "$makinatorData.guessGames.time",
+                score: "$makinatorData.guessGames.score"
+              }
+            }
+          }
+        },
+        // Sort globally by the lowest time and highest score
+        {
+          $sort: {
+            "highestScore.time": 1,
+            "highestScore.score": -1
+          }
+        },
+        // Project to clean up the result
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            score: "$highestScore.score",
+            time: "$highestScore.time"
+          }
+        }
+      ]).toArray() as unknown as HighScore[]
+    }
+    res.send({ highscores, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+
+gamesRouter.post("/:userID/highscores", async (req: Request, res: Response) => {
+  const userID = req.params.userID;
   const gameTypes: GAMES[] = req.body.types;
-  const highscores: HighScore[] = [];
+  const highscores: object[] = [];
   try {
     if (collections.users) {
       const data = await collections.users.findOne(
@@ -55,8 +123,8 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
   }
 });
 
-gamesRouter.post("/highscore", async (req: Request, res: Response) => {
-  const userID = req.body.userID;
+gamesRouter.post("/:userID/highscore", async (req: Request, res: Response) => {
+  const userID = req.params.userID;
   const gameType: GAMES = req.body.type;
   const [service, game] = gameType.split(".");
   let highscore: Game | null = null;
