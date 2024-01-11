@@ -34,6 +34,14 @@ const getVerificationCode = (email: string) => {
     .substring(0, 6);
 };
 
+const validateEmail = (email: string) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
 // verifyRouter.post('/send', async (req: Request, res: Response) => {
 //   const number: string =
 //     req?.body?.number[0] === '+'
@@ -76,7 +84,7 @@ const getVerificationCode = (email: string) => {
 verifyRouter.post("/send", async (req: Request, res: Response) => {
   const email: string = req.body.email;
   const service: string = req.body.service;
-  if (email === "") {
+  if (email === "" || !validateEmail(email)) {
     return res.status(404).send({ status: STATUS_CODES.INVALID_EMAIL });
   } else if (service === "") {
     return res.status(404).send({ status: STATUS_CODES.INVALID_SERVICE });
