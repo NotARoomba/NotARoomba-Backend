@@ -30,7 +30,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 
 gamesRouter.post("/highscores", async (req: Request, res: Response) => {
   const userID = req.body.userID;
-  const gameTypes: GAMES[] = req.body.type;
+  const gameTypes: GAMES[] = req.body.types;
   const highscores: Game[] = [];
   for (let gameType of gameTypes) {
     const [service, game] = gameType.split('.');
@@ -43,6 +43,7 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
       highscores.push({score: (data as any)[service][game].sort(
         (a: Game, b: Game) => b.score - a.score)[0], gamesPlayed: (data as any)[service][game].length})
     }
+    console.log({ highscores, status: STATUS_CODES.SUCCESS })
     res.send({ highscores, status: STATUS_CODES.SUCCESS });
   } catch (error) {
     console.log(error);
