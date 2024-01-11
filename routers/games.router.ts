@@ -30,29 +30,27 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 
 gamesRouter.post("/highscores", async (req: Request, res: Response) => {
   const gameType: GAMES = req.body.type;
-  const [service, game] = gameType.split(".");
   let highscores: HighScore[] = [];
   try {
     if (collections.users) {
       highscores = await collections.users.aggregate([
         // Unwind the guessGames array
         {
-          $unwind: "$makinatorData.guessGames"
+          $unwind: `$${gameType}`
         },
         // Project the necessary fields
         {
           $project: {
             _id: 1,
             username: 1,
-            "makinatorData.guessGames.time": 1,
-            "makinatorData.guessGames.score": 1
+            [`${gameType}.time`]: 1,
+            [`${gameType}.score`]: 1
           }
         },
         // Sort by time in ascending order and score in descending order
         {
           $sort: {
-            "makinatorData.guessGames.time": 1,
-            "makinatorData.guessGames.score": -1
+            [`${gameType}.score`]: -1
           }
         },
         // Group by document ID and find the top score for each game
@@ -64,8 +62,8 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
             },
             highestScore: {
               $first: {
-                time: "$makinatorData.guessGames.time",
-                score: "$makinatorData.guessGames.score"
+                time: [`${gameType}.time`],
+                score: [`${gameType}.score`]
               }
             }
           }
@@ -73,7 +71,6 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
         // Sort globally by the lowest time and highest score
         {
           $sort: {
-            "highestScore.time": 1,
             "highestScore.score": -1
           }
         },
