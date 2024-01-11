@@ -12,6 +12,7 @@ export interface MakinatorGuessGame extends Game {
 
 export interface Game {
   score: number;
+  gamesPlayed: number;
 }
 
 export enum GAMES {

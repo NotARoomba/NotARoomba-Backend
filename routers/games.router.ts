@@ -28,6 +28,29 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
+gamesRouter.post("/highscores", async (req: Request, res: Response) => {
+  const userID = req.body.userID;
+  const gameTypes: GAMES[] = req.body.type;
+  const highscores: Game[] = [];
+  for (let gameType of gameTypes) {
+    const [service, game] = gameType.split('.');
+  try {
+    if (collections.users) {
+      const data = await collections.users.updateOne(
+        { _id: new ObjectId(userID) },
+        {},
+      );
+      highscores.push({score: (data as any)[service][game].sort(
+        (a: Game, b: Game) => b.score - a.score)[0], gamesPlayed: (data as any)[service][game].length})
+    }
+    res.send({ highscores, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+  }
+});
+
 gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     const userID = req.body.userID;
     const gameType: GAMES = req.body.type;
@@ -50,3 +73,4 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
       res.send({ status: STATUS_CODES.GENERIC_ERROR });
     }
   });
+
