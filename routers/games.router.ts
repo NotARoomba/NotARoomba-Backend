@@ -33,6 +33,7 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
     const gameType: GAMES = req.body.type;
     const [service, game] = gameType.split('.');
     let highscore: Game | null = null;
+    let gamesPlayed = 0;
     try {
       if (collections.users) {
         const data = await collections.users.findOne(
@@ -41,8 +42,9 @@ gamesRouter.post("/highscore", async (req: Request, res: Response) => {
         ) as unknown as User;
         highscore = (data as any)[service][game].sort(
             (a: Game, b: Game) => b.score - a.score)[0]
+        gamesPlayed = (data as any)[service][game].length;
       }
-      res.send({ highscore, status: STATUS_CODES.SUCCESS });
+      res.send({ highscore, gamesPlayed, status: STATUS_CODES.SUCCESS });
     } catch (error) {
       console.log(error);
       res.send({ status: STATUS_CODES.GENERIC_ERROR });
