@@ -62,8 +62,8 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
             },
             highestScore: {
               $first: {
-                time: [`${gameType}.time`],
-                score: [`${gameType}.score`]
+                time: [`$${gameType}.time`],
+                score: [`$${gameType}.score`]
               }
             }
           }
