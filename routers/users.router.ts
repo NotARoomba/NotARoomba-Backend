@@ -15,10 +15,14 @@ usersRouter.get("/:emailid", async (req: Request, res: Response) => {
     let user: User | null = null;
     if (collections.users) {
       //check if has @ symbol
-      if (emailid.includes('@')) {
-        user = (await collections.users.findOne({ email: emailid })) as unknown as User;
+      if (emailid.includes("@")) {
+        user = (await collections.users.findOne({
+          email: emailid,
+        })) as unknown as User;
       } else {
-        user = (await collections.users.findOne({ _id: new ObjectId(emailid) })) as unknown as User;
+        user = (await collections.users.findOne({
+          _id: new ObjectId(emailid),
+        })) as unknown as User;
       }
     }
     if (user) {
@@ -30,7 +34,7 @@ usersRouter.get("/:emailid", async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(404).send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
@@ -47,7 +51,7 @@ usersRouter.post("/update", async (req: Request, res: Response) => {
           upsert: true,
         },
       );
-      id = res.upsertedId
+      id = res.upsertedId;
     }
     res.send({ id, status: STATUS_CODES.SUCCESS });
   } catch (error) {
@@ -63,12 +67,18 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
     let emailUsers: User[] = [];
     let nameUsers: User[] = [];
     if (collections.users) {
-      emailUsers = (await collections.users.find({email}).toArray()) as unknown as User[];
-      nameUsers = (await collections.users.find({username}).toArray()) as unknown as User[];
+      emailUsers = (await collections.users
+        .find({ email })
+        .toArray()) as unknown as User[];
+      nameUsers = (await collections.users
+        .find({ username })
+        .toArray()) as unknown as User[];
     }
-    if (emailUsers.length !== 0) return res.status(200).send({ status: STATUS_CODES.EMAIL_IN_USE });
-    else if (nameUsers.length !== 0) res.status(200).send({ status: STATUS_CODES.USERNAME_IN_USE });
-    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE }); 
+    if (emailUsers.length !== 0)
+      return res.status(200).send({ status: STATUS_CODES.EMAIL_IN_USE });
+    else if (nameUsers.length !== 0)
+      res.status(200).send({ status: STATUS_CODES.USERNAME_IN_USE });
+    else res.status(200).send({ status: STATUS_CODES.NONE_IN_USE });
   } catch (error) {
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
   }

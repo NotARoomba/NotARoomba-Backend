@@ -1,8 +1,5 @@
 export class MakinatorData {
-  constructor(
-    public guessGames: Array<MakinatorGuessGame>,
-
-  ) {}
+  constructor(public guessGames: Array<MakinatorGuessGame>) {}
 }
 export interface MakinatorGuessGame extends Game {
   time: number;
@@ -18,5 +15,5 @@ export interface Game {
 export enum GAMES {
   MAKINATOR_GUESS = "makinatorData.guessGames",
   MAKINATOR_PI = "makinatorData.piGames",
-  MAKINATOR_ONLINE = "makinatorData.onlineGames"
+  MAKINATOR_ONLINE = "makinatorData.onlineGames",
 }
