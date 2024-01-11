@@ -32,15 +32,17 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
   const userID = req.body.userID;
   const gameTypes: GAMES[] = req.body.types;
   const highscores: Game[] = [];
+  console.log(userID, gameTypes)
   try {
     if (collections.users) {
       const data = await collections.users.findOne(
         { _id: new ObjectId(userID) },
         {},
       );
+      console.log(data);
       for (let gameType of gameTypes) {
+        console.log(gameType)
         const [service, game] = gameType.split(".");
-        console.log(data);
         highscores.push({
           score: (data as any)[service][game].sort(
             (a: Game, b: Game) => b.score - a.score,
