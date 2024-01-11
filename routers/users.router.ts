@@ -44,14 +44,22 @@ usersRouter.post("/update", async (req: Request, res: Response) => {
   let id: ObjectId | null = null;
   try {
     if (collections.users) {
-      const res = await collections.users.updateOne(
-        { email: data.email },
-        { $set: data },
-        {
-          upsert: true,
-        },
-      );
-      id = res.upsertedId;
+      if (data._id) {
+        id = new ObjectId(data._id)
+        await collections.users.updateOne(
+          { _id: id },
+          { $set: data },
+        );
+      } else {
+        const res = await collections.users.updateOne(
+          { email: data.email },
+          { $set: data },
+          {
+            upsert: true,
+          },
+        );
+        id = res.upsertedId;
+      }
     }
     res.send({ id, status: STATUS_CODES.SUCCESS });
   } catch (error) {
