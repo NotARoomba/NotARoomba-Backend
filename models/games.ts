@@ -9,11 +9,15 @@ export interface MakinatorGuessGame extends Game {
 
 export interface Game {
   score: number;
-  gamesPlayed: number;
 }
 
 export enum GAMES {
   MAKINATOR_GUESS = "makinatorData.guessGames",
   MAKINATOR_PI = "makinatorData.piGames",
   MAKINATOR_ONLINE = "makinatorData.onlineGames",
+}
+
+export interface HighScore {
+  game: Game;
+  gamesPlayed: number;
 }

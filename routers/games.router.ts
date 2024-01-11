@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { collections } from "../services/database.service";
 import STATUS_CODES from "../models/status";
-import { GAMES, Game, MakinatorGuessGame } from "../models/games";
+import { GAMES, Game, HighScore, MakinatorGuessGame } from "../models/games";
 import User from "../models/user";
 import { ObjectId } from "mongodb";
 
@@ -31,7 +31,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
 gamesRouter.post("/highscores", async (req: Request, res: Response) => {
   const userID = req.body.userID;
   const gameTypes: GAMES[] = req.body.types;
-  const highscores: Game[] = [];
+  const highscores: HighScore[] = [];
   console.log(userID, gameTypes)
   try {
     if (collections.users) {
@@ -44,7 +44,7 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
         console.log(gameType)
         const [service, game] = gameType.split(".");
         highscores.push({
-          score: (data as any)[service][game].sort(
+          game: (data as any)[service][game].sort(
             (a: Game, b: Game) => b.score - a.score,
           )[0],
           gamesPlayed: (data as any)[service][game].length,
