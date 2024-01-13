@@ -43,6 +43,7 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
           $project: {
             _id: 1,
             username: 1,
+            avatar: 1,
             [`${gameType}.time`]: 1,
             [`${gameType}.score`]: 1
           }
@@ -59,6 +60,9 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
             _id: "$_id",
             username: {
               $first: "$username"
+            },
+            avatar: {
+              $first: "$avatar"
             },
             highestScore: {
               $first: {
@@ -79,6 +83,7 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
           $project: {
             _id: 1,
             username: 1,
+            avatar: 1,
             score: "$highestScore.score",
             time: "$highestScore.time"
           }
