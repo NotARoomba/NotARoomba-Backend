@@ -25,7 +25,6 @@ const getVerificationCode = (email: string) => {
   return SHA256(
     email +
       (
-        Math.floor(Date.now() / (2 * 60 * 1000)) *
         Math.floor(Date.now() / (2 * 60 * 1000))
       ).toString(),
   )
