@@ -28,8 +28,8 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   }
 });
 
-gamesRouter.post("/highscores", async (req: Request, res: Response) => {
-  const gameType: GAMES = req.body.type;
+gamesRouter.get("/:gameType/highscores/", async (req: Request, res: Response) => {
+  const gameType: GAMES = req?.params?.gameType as GAMES;
   let highscores: HighScore[] = [];
   try {
     if (collections.users) {
@@ -98,9 +98,9 @@ gamesRouter.post("/highscores", async (req: Request, res: Response) => {
 });
 
 
-gamesRouter.post("/:userID/highscores", async (req: Request, res: Response) => {
+gamesRouter.get("/:userID/highscores", async (req: Request, res: Response) => {
   const userID = req.params.userID;
-  const gameTypes: GAMES[] = req.body.types;
+  const gameTypes: GAMES[] = req.query.gameTypes as GAMES[];
   const highscores: object[] = [];
   try {
     if (collections.users) {
@@ -125,9 +125,9 @@ gamesRouter.post("/:userID/highscores", async (req: Request, res: Response) => {
   }
 });
 
-gamesRouter.post("/:userID/highscore", async (req: Request, res: Response) => {
+gamesRouter.get("/:userID/highscore", async (req: Request, res: Response) => {
   const userID = req.params.userID;
-  const gameType: GAMES = req.body.type;
+  const gameType: GAMES = req.query.gameType as GAMES;
   const [service, game] = gameType.split(".");
   let highscore: Game | null = null;
   let gamesPlayed = 0;
