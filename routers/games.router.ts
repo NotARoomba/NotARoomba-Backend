@@ -18,7 +18,6 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
         { _id: new ObjectId(userID) },
         { $push: { [gameType]: gameData } },
       );
-      console.log(data);
     }
     res.send({ status: STATUS_CODES.SUCCESS });
   } catch (error) {

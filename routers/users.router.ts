@@ -84,7 +84,6 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
         .find({ username })
         .toArray()) as unknown as User[];
     }
-    console.log(emailUsers, nameUsers)
     if (emailUsers.length !== 0)
       return res.status(200).send({ status: STATUS_CODES.EMAIL_IN_USE });
     else if (nameUsers.length !== 0)
