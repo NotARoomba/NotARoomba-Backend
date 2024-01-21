@@ -101,7 +101,7 @@ gamesRouter.get("/:gameType/highscores/", async (req: Request, res: Response) =>
 gamesRouter.get("/:userID/highscores", async (req: Request, res: Response) => {
   const userID = req.params.userID;
   const gameTypes: GAMES[] = req.query.gameTypes as GAMES[];
-  console.log(gameTypes)
+  console.log(gameTypes, userID)
   const highscores: object[] = [];
   try {
     if (collections.users) {
