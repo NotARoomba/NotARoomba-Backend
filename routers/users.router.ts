@@ -3,6 +3,7 @@ import { collections } from "../services/database.service";
 import User from "../models/user";
 import STATUS_CODES from "../models/status";
 import { ObjectId } from "mongodb";
+import { GAMES, Game } from "../models/games";
 
 export const usersRouter = express.Router();
 
@@ -92,5 +93,56 @@ usersRouter.post("/check", async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error)
     res.status(500).send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+usersRouter.get("/:userID/highscores", async (req: Request, res: Response) => {
+  const userID = req.params.userID;
+  const gameTypes: GAMES[] = req.query.gameTypes as GAMES[];
+  const highscores: object[] = [];
+  try {
+    if (collections.users) {
+      const data = await collections.users.findOne(
+        { _id: new ObjectId(userID) },
+        {},
+      );
+      for (let gameType of gameTypes) {
+        const [service, game] = gameType.split(".");
+        highscores.push({
+          game: (data as any)[service][game].sort(
+            (a: Game, b: Game) => b.score - a.score,
+          )[0],
+          gamesPlayed: (data as any)[service][game].length,
+        });
+      }
+    }
+    res.send({ highscores, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+usersRouter.get("/:userID/highscore", async (req: Request, res: Response) => {
+  const userID = req.params.userID;
+  const gameType: GAMES = req.query.gameType as GAMES;
+  const [service, game] = gameType.split(".");
+  let highscore: Game | null = null;
+  let gamesPlayed = 0;
+  try {
+    if (collections.users) {
+      const data = (await collections.users.findOne(
+        { _id: new ObjectId(userID) },
+        {},
+      )) as unknown as User;
+      highscore = (data as any)[service][game].sort(
+        (a: Game, b: Game) => b.score - a.score,
+      )[0];
+      gamesPlayed = (data as any)[service][game].length;
+    }
+    res.send({ highscore, gamesPlayed, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
   }
 });
