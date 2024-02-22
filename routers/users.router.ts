@@ -107,12 +107,17 @@ usersRouter.get("/:userID/highscores", async (req: Request, res: Response) => {
       );
       for (let gameType of gameTypes) {
         const [service, game] = gameType.split(".");
-        highscores.push({
-          game: (data as any)[service][game].sort(
-            (a: Game, b: Game) => b.score - a.score,
-          )[0],
-          gamesPlayed: (data as any)[service][game].length,
-        });
+        if ((data as any)[service][game]) {
+          highscores.push({
+            game: (data as any)[service][game].sort(
+              (a: Game, b: Game) => b.score - a.score,
+            )[0],
+            gamesPlayed: (data as any)[service][game].length,
+          });
+        } else {
+          highscores.push({game: {score: 0}, gamesPlayed: 0});
+        }
+        
       }
     }
     res.send({ highscores, status: STATUS_CODES.SUCCESS });
