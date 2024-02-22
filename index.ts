@@ -87,8 +87,8 @@ connectToDatabase()
         socket.join(gameID);
         return callback(gameID);
       });
-      socket.on(NotARoombaEvents.JOIN_GAME, async (email: string, gameID: string, callback) => {
-        const currentGames = (await collections.makinatorGames?.find({ gameID, winner: null }).toArray())
+      socket.on(NotARoombaEvents.JOIN_GAME, async (email: string, gameID: string, callback, gameType: ONLINE_GAME_TYPE) => {
+        const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray())
         if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
         await collections.makinatorGames?.updateOne({gameID}, {$push: {users: {email}}});
         socket.join(gameID);
