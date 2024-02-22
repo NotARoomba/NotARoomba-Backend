@@ -14,6 +14,7 @@ export interface Game {
 export enum GAMES {
   MAKINATOR_GUESS = "makinatorData.guessGames",
   MAKINATOR_PI = "makinatorData.piGames",
+  MAKINATOR_E = "makinatorData.eGames",
   MAKINATOR_ONLINE = "makinatorData.onlineGames",
 }
 

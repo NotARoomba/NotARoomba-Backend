@@ -14,7 +14,7 @@ gamesRouter.post("/update", async (req: Request, res: Response) => {
   const gameType: GAMES = req.body.type;
   try {
     if (collections.users) {
-      const data = await collections.users.updateOne(
+     await collections.users.updateOne(
         { _id: new ObjectId(userID) },
         { $push: { [gameType]: gameData } },
       );
