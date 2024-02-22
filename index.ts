@@ -9,7 +9,7 @@ import { gamesRouter } from "./routers/games.router";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import NotARoombaEvents from "./models/events";
-import { GAMES, MakinatorGuessGame, ONLINE_GAME_TYPE } from "./models/games";
+import { GAMES, MakinatorData, MakinatorGuessGame, ONLINE_GAME_TYPE } from "./models/games";
 import { OnlineMakinatorGame } from "./models/online";
 import STATUS_CODES from "./models/status";
 
@@ -92,6 +92,7 @@ connectToDatabase()
         if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
         await collections.makinatorGames?.updateOne({gameID}, {$push: {users: {email}}});
         socket.join(gameID);
+        socket.to(gameID).emit(NotARoombaEvents.START_GAME);
         return callback(STATUS_CODES.SUCCESS);
       });
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (email: string, gameData: MakinatorGuessGame) => {
