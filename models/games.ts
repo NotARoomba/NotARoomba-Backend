@@ -23,3 +23,5 @@ export interface HighScore {
   score: number;
   time: number;
 }
+
+export type ONLINE_GAME_TYPE = GAMES.MAKINATOR_PI | GAMES.MAKINATOR_E;

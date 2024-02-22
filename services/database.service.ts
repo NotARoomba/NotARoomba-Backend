@@ -5,10 +5,13 @@ const env = dotenv.load({
   MONGODB: String,
   USER_DB_NAME: String,
   USER_COLLECTION: String,
+  GAME_DB_NAME: String,
+  MAKIANTOR_GAME_COLLECTION: String,
 });
 
 export const collections: {
   users?: mongoDB.Collection;
+  makinatorGames?: mongoDB.Collection;
 } = {};
 
 export async function connectToDatabase() {
@@ -20,6 +23,12 @@ export async function connectToDatabase() {
     env.USER_COLLECTION,
   );
   collections.users = usersCollection;
+
+  const gameDB: mongoDB.Db = client.db(env.GAME_DB_NAME);
+  const makinatorGamesCollection: mongoDB.Collection = gameDB.collection(
+    env.MAKIANTOR_GAME_COLLECTION,
+  );
+  collections.makinatorGames = makinatorGamesCollection;
 
   console.log("Successfully connected to database!");
 }

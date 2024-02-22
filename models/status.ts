@@ -14,5 +14,6 @@ enum STATUS_CODES {
   EMAIL_IN_USE,
   USERNAME_IN_USE,
   NONE_IN_USE,
+  NO_GAME_FOUND,
 }
 export default STATUS_CODES;

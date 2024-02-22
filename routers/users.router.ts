@@ -139,10 +139,12 @@ usersRouter.get("/:userID/highscore", async (req: Request, res: Response) => {
         { _id: new ObjectId(userID) },
         {},
       )) as unknown as User;
-      highscore = (data as any)[service][game].sort(
-        (a: Game, b: Game) => b.score - a.score,
-      )[0];
-      gamesPlayed = (data as any)[service][game].length;
+      if ((data as any)[service][game]) {
+        highscore = (data as any)[service][game].sort(
+          (a: Game, b: Game) => b.score - a.score,
+        )[0];
+        gamesPlayed = (data as any)[service][game].length;
+      }
     }
     res.send({ highscore, gamesPlayed, status: STATUS_CODES.SUCCESS });
   } catch (error) {
