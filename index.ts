@@ -6,7 +6,7 @@ import { usersRouter } from "./routers/users.router";
 import { SHA256 } from "crypto-js";
 import { AuthError, HMAC } from "hmac-auth-express";
 import { gamesRouter } from "./routers/games.router";
-import { createServer } from "https";
+import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import NotARoombaEvents from "./models/events";
 import { GAMES, MakinatorData, MakinatorGuessGame, ONLINE_GAME_TYPE } from "./models/games";
