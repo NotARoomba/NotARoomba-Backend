@@ -107,14 +107,15 @@ connectToDatabase()
         return callback(STATUS_CODES.SUCCESS);
       });
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (email: string, gameData: MakinatorGuessGame) => {
-        const gameID = socket.rooms.values[1];
-        const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(socket.rooms.values[0])));
-        Object.keys(usersConnected).find(key => usersConnected[key].includes(socket.rooms.values[0]))
+        const gameID = Array.from(socket.rooms.values())[1];
+        console.log(gameID)
+        const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
+        Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))
         // to not let the user continue if their opponent does not appear
         if (!opponentEmail) {
           //settimeout to end the game if the user does not appear in a minute
           setTimeout(async () => {
-            if (!Object.keys(usersConnected).find(key => usersConnected[key].includes(socket.rooms.values[0]))) {
+            if (!Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))) {
               // need to find game and end it
               await collections.makinatorGames?.updateOne({gameID}, {winner: email, gameData: {[email]: gameData}})
               socket.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
@@ -130,7 +131,7 @@ connectToDatabase()
         socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
       });
       socket.on(NotARoombaEvents.REQUEST_GAME_DATA, async (callback) => {
-        const gameID = socket.rooms.values[1];
+        const gameID = Array.from(socket.rooms.values())[1];
         const game = await collections.makinatorGames?.findOne({gameID});
         return callback(game);
       })
