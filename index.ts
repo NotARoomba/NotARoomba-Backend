@@ -79,20 +79,31 @@ connectToDatabase()
         } else {
           usersConnected[email] = [socket.id];
         }
+        const game = await collections.makinatorGames?.findOne({users: {email}, winner: null});
+        // need to add the user to the already existing game
+        if (game) {
+          socket.join(game.gameID)
+          return game.gameID;
+        } else return null;
+
       });
       socket.on(NotARoombaEvents.CREATE_GAME, async (email: string, gameType: ONLINE_GAME_TYPE, callback) => {
         // create a game with one user in it and generate an ID
         const gameID = SHA256(email+Date.now().toString()).toString().substring(0, 6);
-        await collections.makinatorGames?.insertOne({gameID, gameType, users: [{email}], scores: [], winner: null});
+        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[email]: {}}, scores: [], winner: null});
         socket.join(gameID);
         return callback(gameID);
       });
       socket.on(NotARoombaEvents.JOIN_GAME, async (email: string, gameID: string, callback, gameType: ONLINE_GAME_TYPE) => {
-        const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray())
+        const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray()) as unknown as OnlineMakinatorGame[]
         if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
-        await collections.makinatorGames?.updateOne({gameID}, {$push: {users: {email}}});
         socket.join(gameID);
-        socket.to(gameID).emit(NotARoombaEvents.START_GAME);
+        if (!Object.keys(currentGames[0].gameData).includes(email)) {
+          await collections.makinatorGames?.updateOne({gameID}, {gameData: {[email]: {}}});
+          socket.to(gameID).emit(NotARoombaEvents.START_GAME);
+        } else {
+          socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
+        }
         return callback(STATUS_CODES.SUCCESS);
       });
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (email: string, gameData: MakinatorGuessGame) => {
@@ -105,15 +116,15 @@ connectToDatabase()
           setTimeout(async () => {
             if (!Object.keys(usersConnected).find(key => usersConnected[key].includes(socket.rooms.values[0]))) {
               // need to find game and end it
-              await collections.makinatorGames?.updateOne({gameID}, {winner: email, gameData: {email: gameData}})
+              await collections.makinatorGames?.updateOne({gameID}, {winner: email, gameData: {[email]: gameData}})
               socket.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
             }
           }, 60 * 1000);
           return;
         }
-        await collections.makinatorGames?.updateOne({gameID}, {gameData: {email: gameData}})
+        await collections.makinatorGames?.updateOne({gameID}, {gameData: {[email]: gameData}})
         if (gameData.lives == 0) {
-          await collections.makinatorGames?.updateOne({gameID}, {winner: opponentEmail, gameData: {email: gameData}})
+          await collections.makinatorGames?.updateOne({gameID}, {winner: opponentEmail, gameData: {[email]: gameData}})
           socket.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
         }
         socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
@@ -130,7 +141,7 @@ connectToDatabase()
             usersConnected[user].includes(socket.id)
           ) {
             // remove game created if any and no other users are connected
-            await collections.makinatorGames?.deleteOne({users: [{email: user}], winner: null});
+            await collections.makinatorGames?.deleteOne({["gameData."+user]: {"$exists": true}, winner: null});
             delete usersConnected[user];
           }
         } // find currently active games and sent a timeout to end the game
