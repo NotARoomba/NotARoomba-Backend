@@ -41,7 +41,7 @@ connectToDatabase()
   .then(() => {
     app.use(cors(corsOptions));
     app.use(express.json({limit: '50mb'}));
-    app.use(HMAC(genSecret, { minInterval: 30 }));
+    // app.use(HMAC(genSecret, { minInterval: 30 }));
     app.use("/users", usersRouter);
     app.use("/verify", verifyRouter);
     app.use("/games", gamesRouter);
@@ -151,6 +151,7 @@ connectToDatabase()
       });
     });
     httpServer.listen(port);
+    console.log("Server started!")
     // app.listen(port, () => {
     //   console.log(`Server started at http://localhost:${port}`);
     // });
