@@ -6,7 +6,7 @@ const env = dotenv.load({
   USER_DB_NAME: String,
   USER_COLLECTION: String,
   GAME_DB_NAME: String,
-  MAKIANTOR_GAME_COLLECTION: String,
+  MAKINATOR_GAME_COLLECTION: String,
 });
 
 export const collections: {
@@ -26,7 +26,7 @@ export async function connectToDatabase() {
 
   const gameDB: mongoDB.Db = client.db(env.GAME_DB_NAME);
   const makinatorGamesCollection: mongoDB.Collection = gameDB.collection(
-    env.MAKIANTOR_GAME_COLLECTION,
+    env.MAKINATOR_GAME_COLLECTION,
   );
   collections.makinatorGames = makinatorGamesCollection;
 
