@@ -81,7 +81,7 @@ connectToDatabase()
         } else {
           usersConnected[userID] = [socket.id];
         }
-        const game = await collections.makinatorGames?.findOne({users: {userID}, winner: null});
+        const game = await collections.makinatorGames?.findOne({gameID: {userID}, winner: null});
         // need to add the user to the already existing game
         if (game) {
           socket.join(game.gameID)
@@ -92,7 +92,7 @@ connectToDatabase()
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
         // create a game with one user in it and generate an ID
         const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6);
-        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {}}, scores: [], winner: null});
+        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {}}, winner: null});
         socket.join(gameID);
         return callback(gameID);
       });
