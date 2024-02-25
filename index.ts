@@ -146,7 +146,8 @@ connectToDatabase()
             usersConnected[user].includes(socket.id)
           ) {
             // remove game created if any and no other users are connected
-            await collections.makinatorGames?.deleteOne({["gameData."+user]: {"$exists": true}, winner: null});
+            const currentGame = await collections.makinatorGames?.findOne({["gameData."+user]: {"$exists": true}, winner: null});
+            if (Object.keys(currentGame?.gameData).length <= 1) await collections.makinatorGames?.deleteOne({["gameData."+user]: {"$exists": true}, winner: null});
             delete usersConnected[user];
           }
         } // find currently active games and sent a timeout to end the game
