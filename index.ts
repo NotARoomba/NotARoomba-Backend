@@ -94,7 +94,7 @@ connectToDatabase()
         // create a game with one user in it and generate an ID
         const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6);
         await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {}}, winner: null});
-        socket.join(gameID);
+        await socket.join(gameID);
         return callback(gameID);
       });
       socket.on(NotARoombaEvents.JOIN_GAME, async (userID: string, gameID: string, gameType: ONLINE_GAME_TYPE, callback) => {
@@ -104,9 +104,9 @@ connectToDatabase()
         await socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {}}});
-          socket.to(gameID).emit(NotARoombaEvents.START_GAME);
+          io.to(gameID).emit(NotARoombaEvents.START_GAME);
         } else {
-          socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
+          io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
         }
         return callback(STATUS_CODES.SUCCESS);
       });
@@ -122,7 +122,7 @@ connectToDatabase()
             if (!Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))) {
               // need to find game and end it
               await collections.makinatorGames?.updateOne({gameID}, {winner: userID, gameData: {[userID]: gameData}})
-              socket.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
+              io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
             }
           }, 60 * 1000);
           return;
@@ -130,9 +130,9 @@ connectToDatabase()
         await collections.makinatorGames?.updateOne({gameID}, {gameData: {[userID]: gameData}})
         if (gameData.lives == 0) {
           await collections.makinatorGames?.updateOne({gameID}, {winner: opponentEmail, gameData: {[userID]: gameData}})
-          socket.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
+          io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
         }
-        socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
+        io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
       });
       socket.on(NotARoombaEvents.REQUEST_GAME_DATA, async (callback) => {
         const gameID = Array.from(socket.rooms.values())[1];
