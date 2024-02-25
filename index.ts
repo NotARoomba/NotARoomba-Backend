@@ -101,7 +101,7 @@ connectToDatabase()
         const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray()) as unknown as OnlineMakinatorGame[]
         if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
         if (Object.keys(currentGames[0].gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
-        socket.join(gameID);
+        await socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {}}});
           socket.to(gameID).emit(NotARoombaEvents.START_GAME);
