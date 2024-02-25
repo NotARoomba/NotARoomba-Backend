@@ -28,6 +28,7 @@ const corsOptions: CorsOptions = {
     // "http://172.20.10.5:5173",
     // "http://172.20.10.5"
   ],
+  credentials: true
 };
 
 const io = new Server(httpServer, {cors: corsOptions});
@@ -97,9 +98,10 @@ connectToDatabase()
         socket.join(gameID);
         return callback(gameID);
       });
-      socket.on(NotARoombaEvents.JOIN_GAME, async (userID: string, gameID: string, callback, gameType: ONLINE_GAME_TYPE) => {
+      socket.on(NotARoombaEvents.JOIN_GAME, async (userID: string, gameID: string, gameType: ONLINE_GAME_TYPE, callback) => {
         const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray()) as unknown as OnlineMakinatorGame[]
         if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
+        if (Object.keys(currentGames[0].gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
         socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID}, {gameData: {[userID]: {}}});
