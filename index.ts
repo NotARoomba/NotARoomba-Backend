@@ -103,7 +103,7 @@ connectToDatabase()
         if (Object.keys(currentGames[0].gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
         socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
-          await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData"+userID]: {}}});
+          await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {}}});
           socket.to(gameID).emit(NotARoombaEvents.START_GAME);
         } else {
           socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
