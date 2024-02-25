@@ -28,7 +28,6 @@ const corsOptions: CorsOptions = {
     // "http://172.20.10.5:5173",
     // "http://172.20.10.5"
   ],
-  credentials: true
 };
 
 const io = new Server(httpServer, {cors: corsOptions});
