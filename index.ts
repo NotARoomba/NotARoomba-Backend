@@ -81,7 +81,7 @@ connectToDatabase()
         } else {
           usersConnected[userID] = [socket.id];
         }
-        const game = await collections.makinatorGames?.findOne({gameData: {[userID]: {$exists: true}}, winner: null});
+        const game = await collections.makinatorGames?.findOne({["gameData."+userID]: {"$exists": true}, winner: null});
         console.log(game)
         // need to add the user to the already existing game
         if (game) {
