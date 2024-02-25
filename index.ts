@@ -87,7 +87,7 @@ connectToDatabase()
         if (game) {
           socket.join(game.gameID)
           return game.gameID;
-        } else return null;
+        } else return 0;
 
       });
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
