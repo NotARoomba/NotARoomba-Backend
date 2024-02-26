@@ -112,6 +112,7 @@ connectToDatabase()
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorIrrationalGame) => {
         const gameID = Array.from(socket.rooms.values())[1];
         console.log(gameID)
+        console.log(socket.rooms)
         const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
         Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))
         // to not let the user continue if their opponent does not appear
