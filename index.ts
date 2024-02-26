@@ -91,7 +91,7 @@ connectToDatabase()
       });
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
         // create a game with one user in it and generate an ID
-        const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6);
+        const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6).toUpperCase();
         await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {}}, winner: null});
         await socket.join(gameID);
         return callback(gameID);
