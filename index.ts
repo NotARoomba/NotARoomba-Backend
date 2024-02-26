@@ -103,8 +103,7 @@ connectToDatabase()
         await socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {}}});
-          io.to(gameID).emit(NotARoombaEvents.START_GAME);
-          socket.emit(NotARoombaEvents.START_GAME);
+          setTimeout(() => io.to(gameID).emit(NotARoombaEvents.START_GAME), 2500);
         } else {
           io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
         }
