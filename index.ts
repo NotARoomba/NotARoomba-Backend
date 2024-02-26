@@ -107,7 +107,7 @@ connectToDatabase()
         } else {
           io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
         }
-        return await callback(STATUS_CODES.SUCCESS);
+        return callback(STATUS_CODES.SUCCESS);
       });
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorGuessGame) => {
         const gameID = Array.from(socket.rooms.values())[1];
