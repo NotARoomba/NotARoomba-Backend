@@ -138,6 +138,10 @@ connectToDatabase()
         const game = await collections.makinatorGames?.findOne({gameID});
         return callback(game);
       })
+      socket.on(NotARoombaEvents.UPDATE_GAME_STATE, async () => {
+        const gameID = Array.from(socket.rooms.values())[1];
+        socket.to(gameID).emit(NotARoombaEvents.UPDATE_GAME_STATE);
+      })
       socket.on(NotARoombaEvents.DISCONNECT, async () => {
         for (var user in usersConnected) {
           if (

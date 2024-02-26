@@ -6,6 +6,7 @@ export enum NotARoombaEvents {
     CREATE_GAME = 'create_game',
     UPDATE_GAME_DATA = 'update_game_data',
     REQUEST_GAME_DATA = 'request_game_data',
+    UPDATE_GAME_STATE = 'update_game_state',
     START_GAME = 'start_game',
     END_GAME = 'end_game'
 }
