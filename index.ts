@@ -103,11 +103,12 @@ connectToDatabase()
         await socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {}}});
-          setTimeout(() => io.to(gameID).emit(NotARoombaEvents.START_GAME), 2500);
+          await callback(STATUS_CODES.SUCCESS);
+          io.to(gameID).emit(NotARoombaEvents.START_GAME)
         } else {
+          await callback(STATUS_CODES.SUCCESS);
           io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
         }
-        return callback(STATUS_CODES.SUCCESS);
       });
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorGuessGame) => {
         const gameID = Array.from(socket.rooms.values())[1];
