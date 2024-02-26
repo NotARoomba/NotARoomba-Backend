@@ -4,7 +4,7 @@ export class MakinatorData {
 export interface MakinatorIrrationalGame extends Game {
   time: number;
   lives: number;
-  guesses: number;
+  digits: number;
 }
 
 export interface Game {
