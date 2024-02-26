@@ -131,7 +131,7 @@ connectToDatabase()
           await collections.makinatorGames?.updateOne({gameID}, {$set: {winner: opponentID, ["gameData."+userID]: gameData}})
           io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
         }
-        io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
+        socket.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
       });
       socket.on(NotARoombaEvents.REQUEST_GAME_DATA, async (callback) => {
         const gameID = Array.from(socket.rooms.values())[1];
