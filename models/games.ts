@@ -2,12 +2,16 @@ export class MakinatorData {
   constructor(public irrationalGames: Array<MakinatorIrrationalGame>) {}
 }
 export interface MakinatorIrrationalGame extends Game {
-  time: number;
-  lives: number;
   digits: number;
 }
 
+export interface MakinatorGuessGame extends Game {
+  guesses: number;
+}
+
 export interface Game {
+  time: number;
+  lives: number;
   score: number;
 }
 
