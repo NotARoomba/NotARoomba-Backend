@@ -112,23 +112,23 @@ connectToDatabase()
       socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameID: string, gameData: MakinatorIrrationalGame) => {
         console.log(gameID)
         console.log(socket.rooms)
-        const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
+        const opponentID = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
         Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))
         // to not let the user continue if their opponent does not appear
-        if (!opponentEmail) {
+        if (!opponentID) {
           //settimeout to end the game if the user does not appear in a minute
           setTimeout(async () => {
             if (!Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0]))) {
               // need to find game and end it
-              await collections.makinatorGames?.updateOne({gameID}, {winner: userID, gameData: {[userID]: gameData}})
+              await collections.makinatorGames?.updateOne({gameID}, {$set: {winner: userID, ["gameData."+userID]: gameData}});
               io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
             }
           }, 60 * 1000);
           return;
         }
-        await collections.makinatorGames?.updateOne({gameID}, {gameData: {[userID]: gameData}})
+        await collections.makinatorGames?.updateOne({gameID}, {$set: {["gameData."+userID]: gameData}})
         if (gameData.lives == 0) {
-          await collections.makinatorGames?.updateOne({gameID}, {winner: opponentEmail, gameData: {[userID]: gameData}})
+          await collections.makinatorGames?.updateOne({gameID}, {$set: {winner: opponentID, ["gameData."+userID]: gameData}})
           io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
         }
         io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);
