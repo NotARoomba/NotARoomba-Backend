@@ -109,8 +109,7 @@ connectToDatabase()
         }
         return callback(STATUS_CODES.SUCCESS);
       });
-      socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorIrrationalGame) => {
-        const gameID = Array.from(socket.rooms.values())[1];
+      socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameID: string, gameData: MakinatorIrrationalGame) => {
         console.log(gameID)
         console.log(socket.rooms)
         const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
