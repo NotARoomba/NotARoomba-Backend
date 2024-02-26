@@ -1,4 +1,4 @@
-import { MakinatorGuessGame, ONLINE_GAME_TYPE } from "./games";
+import { MakinatorIrrationalGame, ONLINE_GAME_TYPE } from "./games";
 import User from "./user";
 
 export class OnlineMakinatorGame {
@@ -7,7 +7,7 @@ export class OnlineMakinatorGame {
     public gameID: string,
     public gameType: ONLINE_GAME_TYPE,
     public gameData: {
-      [key: string]: MakinatorGuessGame,
+      [key: string]: MakinatorIrrationalGame,
     },
     public winner: User | null,
   ) {}

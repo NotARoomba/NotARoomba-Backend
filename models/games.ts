@@ -1,7 +1,7 @@
 export class MakinatorData {
-  constructor(public guessGames: Array<MakinatorGuessGame>) {}
+  constructor(public irrationalGames: Array<MakinatorIrrationalGame>) {}
 }
-export interface MakinatorGuessGame extends Game {
+export interface MakinatorIrrationalGame extends Game {
   time: number;
   lives: number;
   guesses: number;

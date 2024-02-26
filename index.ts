@@ -9,7 +9,7 @@ import { gamesRouter } from "./routers/games.router";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import NotARoombaEvents from "./models/events";
-import { GAMES, MakinatorData, MakinatorGuessGame, ONLINE_GAME_TYPE } from "./models/games";
+import { MakinatorIrrationalGame, ONLINE_GAME_TYPE } from "./models/games";
 import { OnlineMakinatorGame } from "./models/online";
 import STATUS_CODES from "./models/status";
 
@@ -86,7 +86,7 @@ connectToDatabase()
         // need to add the user to the already existing game
         if (game) {
           socket.join(game.gameID)
-          return callback(game.gameID);
+          return callback(game);
         } else return callback(null);
       });
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
@@ -109,7 +109,7 @@ connectToDatabase()
         }
         return callback(STATUS_CODES.SUCCESS);
       });
-      socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorGuessGame) => {
+      socket.on(NotARoombaEvents.UPDATE_GAME_DATA, async (userID: string, gameData: MakinatorIrrationalGame) => {
         const gameID = Array.from(socket.rooms.values())[1];
         console.log(gameID)
         const opponentEmail = Object.keys((await collections.makinatorGames?.findOne({gameID}) as unknown as OnlineMakinatorGame).gameData).find((v) => v !== Object.keys(usersConnected).find(key => usersConnected[key].includes(Array.from(socket.rooms.values())[0])));
