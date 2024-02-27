@@ -101,7 +101,7 @@ connectToDatabase()
         if (!currentGames) return callback(STATUS_CODES.NO_GAME_FOUND);
         if (Object.keys(currentGames.gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
         await socket.join(gameID);
-        if (!Object.keys(currentGames[0].gameData).includes(userID)) {
+        if (!Object.keys(currentGames.gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {score: 0, lives: 3, time: 0, digits: 0}}});
           setTimeout(() => io.to(gameID).emit(NotARoombaEvents.START_GAME), 2500)
         } else {
