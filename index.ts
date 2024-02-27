@@ -89,7 +89,7 @@ connectToDatabase()
           return callback(game);
         } else if (gameID) {
           const pastGame = (await collections.makinatorGames?.findOne({ gameID })) as unknown as OnlineMakinatorGame
-          callback(pastGame)
+          return callback(pastGame)
         }
         else return callback(null);
       });
