@@ -75,7 +75,7 @@ connectToDatabase()
     //
     io.on(NotARoombaEvents.CONNECT, (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
-      socket.on(NotARoombaEvents.REGISTER_USER, async (userID: string, callback) => {
+      socket.on(NotARoombaEvents.REGISTER_USER, async (userID: string, callback, gameID?: string) => {
         if (usersConnected[userID]) {
           usersConnected[userID].push(socket.id);
         } else {
@@ -87,7 +87,11 @@ connectToDatabase()
         if (game) {
           socket.join(game.gameID)
           return callback(game);
-        } else return callback(null);
+        } else if (gameID) {
+          const pastGame = (await collections.makinatorGames?.findOne({ gameID })) as unknown as OnlineMakinatorGame
+          callback(pastGame)
+        }
+        else return callback(null);
       });
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
         // create a game with one user in it and generate an ID
