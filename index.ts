@@ -97,9 +97,9 @@ connectToDatabase()
         return callback(gameID);
       });
       socket.on(NotARoombaEvents.JOIN_GAME, async (userID: string, gameID: string, gameType: ONLINE_GAME_TYPE, callback) => {
-        const currentGames = (await collections.makinatorGames?.find({ gameID, gameType, winner: null }).toArray()) as unknown as OnlineMakinatorGame[]
-        if (currentGames?.length == 0) return callback(STATUS_CODES.NO_GAME_FOUND);
-        if (Object.keys(currentGames[0].gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
+        const currentGames = (await collections.makinatorGames?.findOne({ gameID, gameType, winner: null })) as unknown as OnlineMakinatorGame
+        if (!currentGames) return callback(STATUS_CODES.NO_GAME_FOUND);
+        if (Object.keys(currentGames.gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
         await socket.join(gameID);
         if (!Object.keys(currentGames[0].gameData).includes(userID)) {
           await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {score: 0, lives: 3, time: 0, digits: 0}}});
