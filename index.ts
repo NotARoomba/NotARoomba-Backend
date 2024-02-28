@@ -135,8 +135,9 @@ connectToDatabase()
           return;
         }
         await collections.makinatorGames?.updateOne({gameID}, {$set: {["gameData."+userID]: gameData}})
-        if (gameData.lives == 0) {
-          await collections.makinatorGames?.updateOne({gameID}, {$set: {winner: opponentID, ["gameData."+userID]: gameData}})
+        const currentGame = (await collections.makinatorGames?.findOne({ gameID, winner: null })) as unknown as OnlineMakinatorGame
+        if (Object.values(currentGame.gameData).map(v => v.lives).reduce((partialSum, a) => partialSum + a, 0) === 0) {
+          await collections.makinatorGames?.updateOne({gameID}, {$set: {winner: Object.keys(currentGame.gameData).sort((a, b) => currentGame.gameData[b].score - currentGame.gameData[a].score)[0], ["gameData."+userID]: gameData}})
           io.to(gameID).emit(NotARoombaEvents.END_GAME); // later client will request game data
         }
         socket.to(gameID).emit(NotARoombaEvents.UPDATE_GAME_STATE);
