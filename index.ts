@@ -12,6 +12,7 @@ import NotARoombaEvents from "./models/events";
 import { MakinatorIrrationalGame, ONLINE_GAME_TYPE } from "./models/games";
 import { OnlineMakinatorGame } from "./models/online";
 import STATUS_CODES from "./models/status";
+import { ObjectId } from "mongodb";
 
 const app = express();
 const httpServer = createServer(app);
@@ -96,7 +97,8 @@ connectToDatabase()
       socket.on(NotARoombaEvents.CREATE_GAME, async (userID: string, gameType: ONLINE_GAME_TYPE, callback) => {
         // create a game with one user in it and generate an ID
         const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6).toUpperCase();
-        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {score: 0, lives: 3, time: 0, digits: 0}}, winner: null});
+        const user = await collections.users?.findOne({_id: new ObjectId(userID)})
+        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {score: 0, lives: 3, time: 0, digits: 0}}, winner: null, usernames: [user?.name]});
         await socket.join(gameID);
         return callback(gameID);
       });
@@ -106,7 +108,8 @@ connectToDatabase()
         if (Object.keys(currentGames.gameData).length !== 1) return callback(STATUS_CODES.GAME_FULL);
         await socket.join(gameID);
         if (!Object.keys(currentGames.gameData).includes(userID)) {
-          await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {score: 0, lives: 3, time: 0, digits: 0}}});
+          const user = await collections.users?.findOne({_id: new ObjectId(userID)})
+          await collections.makinatorGames?.updateOne({gameID, gameType}, {$set: {["gameData."+userID]: {score: 0, lives: 3, time: 0, digits: 0}}, $push: {usernames: user?.name}});
           setTimeout(() => io.to(gameID).emit(NotARoombaEvents.START_GAME), 2500)
         } else {
           io.to(gameID).emit(NotARoombaEvents.REQUEST_GAME_DATA);

@@ -1,5 +1,4 @@
 import { MakinatorIrrationalGame, ONLINE_GAME_TYPE } from "./games";
-import User from "./user";
 
 export class OnlineMakinatorGame {
   constructor(
@@ -9,6 +8,7 @@ export class OnlineMakinatorGame {
     public gameData: {
       [key: string]: MakinatorIrrationalGame,
     },
-    public winner: User | null,
+    public usernames: string[],
+    public winner: string | null,
   ) {}
 }
