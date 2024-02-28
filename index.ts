@@ -75,7 +75,7 @@ connectToDatabase()
     //
     io.on(NotARoombaEvents.CONNECT, (socket: Socket) => {
       console.log(`New client connected: ${socket.id}`);
-      socket.on(NotARoombaEvents.REGISTER_USER, async (userID: string, callback, gameID?: string) => {
+      socket.on(NotARoombaEvents.REGISTER_USER, async (userID: string, gameID: string | null, callback) => {
         if (usersConnected[userID]) {
           usersConnected[userID].push(socket.id);
         } else {
