@@ -9,6 +9,7 @@ export class OnlineMakinatorGame {
       [key: string]: MakinatorIrrationalGame,
     },
     public usernames: string[],
+    public date: Date,
     public winner: string | null,
   ) {}
 }

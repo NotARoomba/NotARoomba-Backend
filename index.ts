@@ -99,7 +99,7 @@ connectToDatabase()
         // create a game with one user in it and generate an ID
         const gameID = SHA256(userID+Date.now().toString()).toString().substring(0, 6).toUpperCase();
         const user = await collections.users?.findOne({_id: new ObjectId(userID)}) as unknown as User
-        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {score: 0, lives: 3, time: 0, digits: 0}}, winner: null, usernames: [user.username]});
+        await collections.makinatorGames?.insertOne({gameID, gameType, gameData: {[userID]: {score: 0, lives: 3, time: 0, digits: 0}},  usernames: [user.username], date: Date.now(), winner: null});
         await socket.join(gameID);
         return callback(gameID);
       });

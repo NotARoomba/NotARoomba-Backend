@@ -3,6 +3,7 @@ import { collections } from "../services/database.service";
 import STATUS_CODES from "../models/status";
 import { GAMES, HighScore } from "../models/games";
 import { ObjectId } from "mongodb";
+import { OnlineMakinatorGame } from "../models/online";
 
 export const gamesRouter = express.Router();
 
@@ -89,6 +90,20 @@ gamesRouter.get("/:gameType/highscores/", async (req: Request, res: Response) =>
       ]).toArray() as unknown as HighScore[]
     }
     res.send({ highscores, status: STATUS_CODES.SUCCESS });
+  } catch (error) {
+    console.log(error);
+    res.send({ status: STATUS_CODES.GENERIC_ERROR });
+  }
+});
+
+gamesRouter.get("/online/:userID/", async (req: Request, res: Response) => {
+  const userID: string = req?.params?.userID as string;
+  let games: OnlineMakinatorGame[] = [];
+  try {
+    if (collections.makinatorGames) {
+      games = ((await collections.makinatorGames.find({["gameData."+userID]: {"$exists": true}}).toArray()) as unknown as OnlineMakinatorGame[]).sort((a, b) => b.date.getUTCSeconds() - a.date.getUTCSeconds() ) 
+    }
+    res.send({ games, status: STATUS_CODES.SUCCESS });
   } catch (error) {
     console.log(error);
     res.send({ status: STATUS_CODES.GENERIC_ERROR });
