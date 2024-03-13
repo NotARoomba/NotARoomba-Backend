@@ -101,7 +101,7 @@ gamesRouter.get("/online/:userID/", async (req: Request, res: Response) => {
   let games: OnlineMakinatorGame[] = [];
   try {
     if (collections.makinatorGames) {
-      games = ((await collections.makinatorGames.find({["gameData."+userID]: {"$exists": true}}).toArray()) as unknown as OnlineMakinatorGame[]).sort((a, b) => b.date.getUTCSeconds() - a.date.getUTCSeconds() ) 
+      games = ((await collections.makinatorGames.find({["gameData."+userID]: {"$exists": true}}).toArray()) as unknown as OnlineMakinatorGame[]).sort((a, b) => new Date(b.date).getUTCSeconds() - new Date(b.date).getUTCSeconds() ) 
     }
     res.send({ games, status: STATUS_CODES.SUCCESS });
   } catch (error) {
