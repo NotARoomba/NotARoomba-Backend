@@ -23,10 +23,12 @@ const corsOptions: CorsOptions = {
   origin: [
     "https://makinator.notaroomba.dev",
     "http://makinator.notaroomba.dev",
-    "http://localhost:5173",
-    "http://localhost",
-    "https://localhost:5173",
-    "https://localhost",
+    "https://asteroids.notaroomba.dev",
+    "http://asteroids.notaroomba.dev",
+    // "http://localhost:5173",
+    // "http://localhost",
+    // "https://localhost:5173",
+    // "https://localhost",
     // "http://172.20.10.5:5173",
     // "http://172.20.10.5"
   ],
