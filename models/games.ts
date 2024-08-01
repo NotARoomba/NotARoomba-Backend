@@ -1,18 +1,27 @@
 export class MakinatorData {
   constructor(public irrationalGames: Array<MakinatorIrrationalGame>) {}
 }
-export interface MakinatorIrrationalGame extends Game {
+export class AsteroidsData {
+  constructor(public games: Array<AsteroidsGame>) {}
+}
+export interface MakinatorIrrationalGame extends MakinatorGame {
   digits: number;
 }
 
-export interface MakinatorGuessGame extends Game {
+export interface MakinatorGuessGame extends MakinatorGame {
   guesses: number;
 }
 
 export interface Game {
-  time: number;
-  lives: number;
   score: number;
+}
+
+export interface MakinatorGame extends Game {
+  lives: number;
+  time: number;
+}
+export interface AsteroidsGame extends Game {
+  level: number;
 }
 
 export enum GAMES {
@@ -20,12 +29,17 @@ export enum GAMES {
   MAKINATOR_PI = "makinatorData.piGames",
   MAKINATOR_E = "makinatorData.eGames",
   MAKINATOR_ONLINE = "makinatorData.onlineGames",
+  ASTEROIDS = "asteroidsData.games",
+  // ASTEROIDS_ONLINE = "asteroidsData.onlineGames",
 }
 
 export interface HighScore {
+  _id: string;
   username: string;
+  avatar: string;
   score: number;
-  time: number;
+  time?: number;
+  level?: string;
 }
 
 export type ONLINE_GAME_TYPE = GAMES.MAKINATOR_PI | GAMES.MAKINATOR_E;

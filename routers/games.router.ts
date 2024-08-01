@@ -32,7 +32,57 @@ gamesRouter.get("/:gameType/highscores/", async (req: Request, res: Response) =>
   let highscores: HighScore[] = [];
   try {
     if (collections.users) {
-      highscores = await collections.users.aggregate([
+      // for makinator
+      highscores = gameType == GAMES.ASTEROIDS ? await collections.users.aggregate([
+        // Unwind the guessGames array
+        {
+          $unwind: `$${gameType}`
+        },
+        // Project the necessary fields including the level
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            avatar: 1,
+            [`${gameType}.score`]: 1,
+            [`${gameType}.level`]: 1  // Include the level field
+          }
+        },
+        // Sort by score in descending order
+        {
+          $sort: {
+            [`${gameType}.score`]: -1
+          }
+        },
+        // Group by document ID and find the highest score for each user
+        {
+          $group: {
+            _id: "$_id",
+            username: { $first: "$username" },
+            avatar: { $first: "$avatar" },
+            level: { $first: `$${gameType}.level` }, // Include level in grouping
+            highestScore: {
+              $first: `$${gameType}.score`
+            }
+          }
+        },
+        // Sort globally by the highest score
+        {
+          $sort: {
+            "highestScore": -1
+          }
+        },
+        // Project to clean up the result
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            avatar: 1,
+            level: 1,  // Include level in the final projection
+            score: "$highestScore"
+          }
+        }
+      ]).toArray() as unknown as HighScore[] : await collections.users.aggregate([
         // Unwind the guessGames array
         {
           $unwind: `$${gameType}`

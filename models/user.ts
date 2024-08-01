@@ -1,4 +1,4 @@
-import { MakinatorData } from "./games";
+import { AsteroidsData, MakinatorData } from "./games";
 
 export default class User {
   constructor(
@@ -7,6 +7,7 @@ export default class User {
     public username: string,
     public email: string,
     public dateJoined: Date,
-    public makinatorData: Array<MakinatorData>,
+    public makinatorData: Array<MakinatorData> | null,
+    public asteroidsData: Array<AsteroidsData> | null,
   ) {}
 }
